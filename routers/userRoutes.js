@@ -3,6 +3,15 @@ const router = express.Router();
 
 const User = require("../models/user");
 
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -29,6 +38,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
 router.get("/:id", async (req, res) => {
   console.log(req.params.id);
   try {
@@ -54,6 +64,18 @@ router.patch("/:id", async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+router.delete("/:id", async (req,res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if(!user){
+      return res.status(404).json({message:"User not found or AllReady Deleted"});
+    }
+    res.status(200).json({message: `user ${user} successfully deleted !`});
+  } catch (error) {
+    res.status(500).json({message: error.message});
   }
 });
 
